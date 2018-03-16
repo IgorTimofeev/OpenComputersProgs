@@ -1,1 +1,34 @@
-
+{
+	{
+		url = "https://raw.githubusercontent.com/rrrGame/OpenComputersProgs/master/Interstellar/Interstellar.lua",
+		path = "/Interstellar.lua"
+	},
+  {
+      url = "https://raw.githubusercontent.com/IgorTimofeev/OpenComputers/master/lib/advancedLua.lua",
+      path = "/lib/advancedLua.lua"
+  },
+  {
+      url = "https://raw.githubusercontent.com/IgorTimofeev/OpenComputers/master/lib/color.lua",
+      path = "/lib/color.lua"
+  },
+  {
+      url = "https://raw.githubusercontent.com/IgorTimofeev/OpenComputers/master/lib/FormatModules/OCIF.lua",
+      path = "/lib/FormatModules/OCIF.lua"
+  },
+  {
+      url = "https://raw.githubusercontent.com/IgorTimofeev/OpenComputers/master/lib/image.lua",
+      path = "/lib/image.lua"
+  },
+  {
+      url = "https://raw.githubusercontent.com/IgorTimofeev/OpenComputers/master/lib/doubleBuffering.lua",
+      path = "/lib/doubleBuffering.lua"
+  },
+  {
+      url = "https://raw.githubusercontent.com/IgorTimofeev/OpenComputers/master/lib/syntax.lua",
+      path = "/lib/syntax.lua"
+  },
+  {
+      url = "https://raw.githubusercontent.com/IgorTimofeev/OpenComputers/master/lib/GUI.lua",
+      path = "/lib/GUI.lua"
+  },
+}
