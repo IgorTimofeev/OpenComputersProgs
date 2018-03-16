@@ -1,8 +1,8 @@
 {
-	{
-		url = "https://raw.githubusercontent.com/rrrGame/OpenComputersProgs/master/Interstellar/Interstellar.lua",
-		path = "/Interstellar.lua"
-	},
+  {
+      url = "https://raw.githubusercontent.com/rrrGame/OpenComputersProgs/master/Interstellar/Interstellar.lua",
+      path = "/Interstellar.lua"
+  },
   {
       url = "https://raw.githubusercontent.com/IgorTimofeev/OpenComputers/master/lib/advancedLua.lua",
       path = "/lib/advancedLua.lua"
