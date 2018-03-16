@@ -377,7 +377,7 @@ local function drawCloak()
 end
 local function drawMap()
     navContainer:deleteChildren()
-    navContainer:addChild(GUI.label(2, 2, navContainer.width, navContainer.height, colors.textColor, "Тут типа карта должна быть, ага.")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(2, 2, navContainer.width, navContainer.height, colors.textColor, "Хуй пизда, сковорода.")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
 end
 -----------------------------------------------------------------------------
 
