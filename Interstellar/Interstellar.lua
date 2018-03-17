@@ -1,4 +1,5 @@
 local comp = require('component')
+local sru = require("serialization")
 local buffer = require("doubleBuffering")
 local GUI = require("GUI")
 local computer = require("computer")
@@ -8,9 +9,16 @@ local shell = require("shell")
 local ship = comp.warpdriveShipController
 --Переменные, массивы, прочая хрень
 
-local version = "1.1"
+local version = "1.2"
+local configPath = "/Interstellar/config.cfg"
 radartable = {}
 buffer.setResolution(80,25)
+
+local config = {
+    loggingEnabled = false,
+    requestURL = "",
+    requestStructure = "",
+}
 
 local colors = {
     background = 0xFFFFFF,
@@ -32,6 +40,29 @@ mainContainer:addChild(GUI.panel(1, 1, mainContainer.width, mainContainer.height
 local navContainer = mainContainer:addChild(GUI.container(18,3,62,21))
 local infoContainer = mainContainer:addChild(GUI.container(1,2,16,23))
 -----
+local function writeConfig()
+    local confSerialized = sru.serialize(config)
+    local file = io.open(configPath,"w")
+    file:write(confSerialized)
+    file:close()
+end
+
+local function loadConfig()
+    if not fs.exists(configPath) then
+        fs.makeDirectory(fs.path(configPath))
+        writeConfig()
+    end
+    local file = io.open(configPath,"r")
+    config = sru.unserialize(file:read("*a"))
+    file:close()
+end
+
+local function request(data)
+    if not config.loggingEnabled then return end
+    if not comp.isAvailable("internet") then return end
+    require("internet").request(config.requestURL,config.requestStructure.." "..data)
+end
+
 local function wget(url, path)
 	fs.makeDirectory(fs.path(path))
 	shell.execute("wget " .. url .. " " .. path .. " -fq")
@@ -39,7 +70,7 @@ end
 
 local function unserializeFile(path)
 	local file = io.open(path, "r")
-	local data = require("serialization").unserialize(file:read("*a"))
+	local data = sru.unserialize(file:read("*a"))
 	file:close()
 	return data
 end
@@ -73,7 +104,21 @@ local function drawLoggingSettings()
     navContainer:deleteChildren()
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
     navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Настройки логов")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
-    navContainer:addChild(GUI.switchAndLabel(2, 3, 31, 8, colors.button, 0x1D1D1D, 0xEEEEEE, colors.textColor, "Включить логирование:", false))
+    navContainer:addChild(GUI.text(2,3,colors.button,"Логгирование с помощью POST-запроса"))
+    navContainer:addChild(GUI.switchAndLabel(2, 5, 31, 8, colors.button, 0x1D1D1D, 0xEEEEEE, colors.textColor, "Включить логирование:", config.loggingEnabled)).switch.onStateChanged = function()
+        config.loggingEnabled = true
+        writeConfig()
+    end
+    navContainer:addChild(GUI.label(2, 7, 16, 1, colors.textColor, "Адрес для запросов"))
+    navContainer:addChild(GUI.input(2, 8, 30, 1, 0xEEEEEE, 0x555555, 0x999999, 0xFFFFFF, 0x2D2D2D, config.requestURL, "URL")).onInputFinished = function(navContainer, input, eventData, text)
+        config.requestURL = text
+        writeConfig()
+    end 
+    navContainer:addChild(GUI.label(2, 10, 16, 1, colors.textColor, "Структура запроса (текст в начале)"))
+    navContainer:addChild(GUI.input(2, 11, 30, 1, 0xEEEEEE, 0x555555, 0x999999, 0xFFFFFF, 0x2D2D2D, config.requestStructure, "text:any()")).onInputFinished = function(navContainer, input, eventData, text)
+        config.requestStructure = text
+        writeConfig()
+    end
 end
 
 local function drawShipSettings()
@@ -205,6 +250,7 @@ end
 
 local function drawJump()
     ship.command("MANUAL")
+    local xp,yp,zp = ship.position()
     local _,max = ship.getMaxJumpDistance()
     local x,y,z = ship.dim_positive()
     local x2,y2,z2 = ship.dim_negative()
@@ -255,13 +301,13 @@ local function drawJump()
         ship.rotationSteps(rot)
         ship.movement(jumpX,jumpY,jumpZ)
         ship.enable(true)
-        --ship.command("IDLE")
+        request("Ship is jumping on these axis: "..jumpX..", "..jumpY..", "..jumpZ..". New coordinates: "..xp..", "..yp..", "..zp..".")
         antiFreeze()
     end
     navContainer:addChild(GUI.button(33, 18, 29, 3, colors.button, colors.textColor2, colors.buttonPressed, colors.textColor2, "Совершить гипер-переход")).onTouch = function()
         ship.command("HYPERDRIVE")
         ship.enable(true)
-        --ship.command("IDLE")
+        request("Ship is jumping hyper at these coordinates: "..x..', '..y..', '..z..'.')
         antiFreeze()
     end
 end
@@ -405,7 +451,7 @@ local function drawMap()
     navContainer:addChild(GUI.label(2, 2, navContainer.width, navContainer.height, colors.textColor, "Тут типа карта должна быть, ага.")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
 end
 -----------------------------------------------------------------------------
-
+loadConfig()
 --верхняя панель
 
 local menu = mainContainer:addChild(GUI.menu(1, 1, mainContainer.width, colors.panel, 0x666666, colors.buttonPressed, 0xFFFFFF, 0.7))
