@@ -307,7 +307,7 @@ local function drawJump()
     navContainer:addChild(GUI.button(33, 18, 29, 3, colors.button, colors.textColor2, colors.buttonPressed, colors.textColor2, "Совершить гипер-переход")).onTouch = function()
         ship.command("HYPERDRIVE")
         ship.enable(true)
-        request("Ship is jumping hyper at these coordinates: "..x..', '..y..', '..z..'.')
+        request("Ship is jumping hyper at these coordinates: "..xp..', '..yp..', '..zp..'.')
         antiFreeze()
     end
 end
