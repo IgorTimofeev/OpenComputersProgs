@@ -9,7 +9,7 @@ local shell = require("shell")
 local ship = comp.warpdriveShipController
 --Переменные, массивы, прочая хрень
 
-local version = "1.2"
+local version = "1.21"
 local configPath = "/Interstellar/config.cfg"
 radartable = {}
 buffer.setResolution(80,25)
