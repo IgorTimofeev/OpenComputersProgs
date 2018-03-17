@@ -133,29 +133,29 @@ local function drawUpdate()
         return
     end
     local b = require("internet").request("https://raw.githubusercontent.com/rrrGame/OpenComputersProgs/master/Interstellar/version.txt")
-    local newVersion = " "
+    local newVersion = ""
     for chunk in b do
         newVersion = newVersion..require("text").trim(chunk)
     end
     navContainer:deleteChildren()
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
+    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Обновления")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    if version == newVersion then
+        navContainer:addChild(GUI.text(2,3,colors.buttonNo,"Новых обновлений не найдено."))
+        return
+    end
     local textBox = navContainer:addChild(GUI.textBox(2, 9, 32, 8, 0xEEEEEE, 0x2D2D2D, {}, 1, 1, 0))
     local c = require("internet").request("https://raw.githubusercontent.com/rrrGame/OpenComputersProgs/master/Interstellar/changelogs/latest.txt")
-    local changelog = " "
+    local changelog = ""
     for chunk in c do
         changelog = changelog..require("text").trim(chunk)
     end
     for word in changelog:gmatch("[^\n]+") do
         table.insert(textBox.lines,word)
     end
-    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Обновления")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
-    if version == newVersion then
-        navContainer:addChild(GUI.text(2,3,colors.buttonNo,"Новых обновлений не найдено."))
-        return
-    end
     navContainer:addChild(GUI.text(2,3,colors.textColor,"Найдено новое обновление!"))
     navContainer:addChild(GUI.text(2,5,colors.textColor,"Новая версия: "..newVersion))
-    navContainer:addChild(GUI.text(2,6,colors.textColor,"Старая версия: "..version))
+    navContainer:addChild(GUI.text(2,6,colors.textColor,"Текущая версия: "..version))
     navContainer:addChild(GUI.text(2,8,colors.button,"Список изменений: "))
     navContainer:addChild(GUI.button(2, 18, 15, 3, colors.button, colors.textColor2, colors.buttonPressed, colors.textColor2, "Обновить ПО")).onTouch = function()
         mainContainer:stopEventHandling()
