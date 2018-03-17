@@ -4,10 +4,11 @@ local GUI = require("GUI")
 local computer = require("computer")
 local event = require("event")
 local fs = require("filesystem")
+local shell = require("shell")
 local ship = comp.warpdriveShipController
 --Переменные, массивы, прочая хрень
 
-local version = "0.6"
+local version = "1.1"
 radartable = {}
 buffer.setResolution(80,25)
 
@@ -34,6 +35,13 @@ local infoContainer = mainContainer:addChild(GUI.container(1,2,16,23))
 local function wget(url, path)
 	fs.makeDirectory(fs.path(path))
 	shell.execute("wget " .. url .. " " .. path .. " -fq")
+end
+
+local function unserializeFile(path)
+	local file = io.open(path, "r")
+	local data = require("serialization").unserialize(file:read("*a"))
+	file:close()
+	return data
 end
 
 local function CoreScreenFix() 
@@ -156,7 +164,24 @@ local function drawUpdate()
         comp.gpu.setForeground(0xFFFFFF)
         print("Начинаю процесс обновления..")
         print("\n\nЗагрузка списка файлов..")
-        wget("")
+        local path = "/Interstellar/filelist.txt"
+        wget("https://raw.githubusercontent.com/rrrGame/OpenComputersProgs/master/Interstellar/filelist.txt", path)
+        local applist = unserializeFile(path)
+        fs.remove(path)
+        for i = 1, #applist do
+            if fs.exists(applist[i].path) then
+                fs.remove(applist[i].path)
+                print("Обновляю "..applist[i].path)
+                wget(applist[i].url,applist[i].path)
+            else 
+                print("Качаю "..applist[i].path)
+                wget(applist[i].url,applist[i].path)
+            end
+        end
+        comp.gpu.setForeground(0x00FF00)
+        print("\n\nОбновление завершено успешно!")
+        os.sleep(2)
+        shell.execute("/Interstellar.lua")
     end
 end
 
@@ -377,7 +402,7 @@ local function drawCloak()
 end
 local function drawMap()
     navContainer:deleteChildren()
-    navContainer:addChild(GUI.label(2, 2, navContainer.width, navContainer.height, colors.textColor, "Хуй пизда, сковорода.")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(2, 2, navContainer.width, navContainer.height, colors.textColor, "Тут типа карта должна быть, ага.")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
 end
 -----------------------------------------------------------------------------
 
