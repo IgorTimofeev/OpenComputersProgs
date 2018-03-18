@@ -1,0 +1,2 @@
+Interstellar v 1.3 changelog:
+1.Minor'ные фиксы багов
