@@ -9,7 +9,7 @@ local shell = require("shell")
 local ship = comp.warpdriveShipController
 --Переменные, массивы, прочая хрень
 
-local version = "1.21"
+local version = "1.3"
 local configPath = "/Interstellar/config.cfg"
 radartable = {}
 buffer.setResolution(80,25)
@@ -250,7 +250,6 @@ end
 
 local function drawJump()
     ship.command("MANUAL")
-    local xp,yp,zp = ship.position()
     local _,max = ship.getMaxJumpDistance()
     local x,y,z = ship.dim_positive()
     local x2,y2,z2 = ship.dim_negative()
@@ -301,13 +300,14 @@ local function drawJump()
         ship.rotationSteps(rot)
         ship.movement(jumpX,jumpY,jumpZ)
         ship.enable(true)
-        request("Ship is jumping on these axis: "..jumpX..", "..jumpY..", "..jumpZ..". New coordinates: "..xp..", "..yp..", "..zp..".")
+        local xp,yp,zp = ship.position()
+        request("Ship is jumping on these axis: "..jumpX..", "..jumpY..", "..jumpZ..". New coordinates: "..xp+jumpX..", "..yp+jumpY..", "..zp+jumpZ..".")
         antiFreeze()
     end
     navContainer:addChild(GUI.button(33, 18, 29, 3, colors.button, colors.textColor2, colors.buttonPressed, colors.textColor2, "Совершить гипер-переход")).onTouch = function()
         ship.command("HYPERDRIVE")
         ship.enable(true)
-        request("Ship is jumping hyper at these coordinates: "..xp..', '..yp..', '..zp..'.')
+        request("Ship is switching hyper at these coordinates: "..xp..', '..yp..', '..zp..'.')
         antiFreeze()
     end
 end
@@ -388,6 +388,7 @@ local function drawRadar()
     end
 end
 local function drawCrew()
+    ship.command("SUMMON")
     navContainer:deleteChildren()
     local pl = ""
     local str, players = ship.getAttachedPlayers()
@@ -398,15 +399,18 @@ local function drawCrew()
     navContainer:addChild(GUI.input(2, 18, 29, 1, 0xEEEEEE, 0x555555, 0x999999, 0xFFFFFF, 0x2D2D2D, "", "Ник игрока")).onInputFinished = function(navContainer, input, eventData, text) pl = text end
     navContainer:addChild(GUI.button(2, 20, 29, 1, colors.button, colors.textColor2, colors.buttonPressed, colors.textColor2, "Телепортировать по нику")).onTouch = function()
         for i = 1,#players do
-            if pl ~= players[i] then GUI.error("Этот игрок не подключен к контроллеру!") return end
+            if pl == players[i] then
+                GUI.error("Sum")
+                ship.command("SUMMON")
+                ship.targetName(pl)
+                ship.enable(true)
+                return
+            end
         end
-        ship.targetName(pl)
-        ship.command("SUMMON")
-        ship.enable(true)
     end
     navContainer:addChild(GUI.button(33, 20, 29, 1, colors.buttonNo, colors.textColor2, colors.buttonNoPressed, colors.textColor2, "Телепортировать всех")).onTouch = function()
-        ship.targetName("")
         ship.command("SUMMON")
+        ship.targetName("")
         ship.enable(true)
     end   
     local textBox = navContainer:addChild(GUI.textBox(2, 4, 60, 12, 0xEEEEEE, 0x2D2D2D, {}, 1, 1, 0))
