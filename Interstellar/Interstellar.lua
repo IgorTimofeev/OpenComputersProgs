@@ -9,7 +9,7 @@ local shell = require("shell")
 local ship = comp.warpdriveShipController
 --Переменные, массивы, прочая хрень
 
-local version = "1.3"
+local version = "1.32"
 local configPath = "/Interstellar/config.cfg"
 radartable = {}
 buffer.setResolution(80,25)
@@ -307,6 +307,7 @@ local function drawJump()
     navContainer:addChild(GUI.button(33, 18, 29, 3, colors.button, colors.textColor2, colors.buttonPressed, colors.textColor2, "Совершить гипер-переход")).onTouch = function()
         ship.command("HYPERDRIVE")
         ship.enable(true)
+        local xp,yp,zp = ship.position()
         request("Ship is switching hyper at these coordinates: "..xp..', '..yp..', '..zp..'.')
         antiFreeze()
     end
