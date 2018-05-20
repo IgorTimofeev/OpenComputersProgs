@@ -81,15 +81,15 @@ local function CoreScreenFix()
 end
 
 local function drawNav()
-    infoContainer:deleteChildren()
+    infoContainer:removeChildren()
     infoContainer:addChild(GUI.panel(1,1,infoContainer.width,infoContainer.height,colors.button,0.1))
     local sx,sy,sz,planet = ship.position()
     local pos
-    infoContainer:addChild(GUI.label(1,2,15,1,colors.textColor2,'Координаты:')):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
-    infoContainer:addChild(GUI.label(1,3,15,1,colors.textColor2,'X: '..sx)):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
-    infoContainer:addChild(GUI.label(1,4,15,1,colors.textColor2,'Y: '..sy)):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
-    infoContainer:addChild(GUI.label(1,5,15,1,colors.textColor2,'Z: '..sz)):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
-    infoContainer:addChild(GUI.label(1,7,15,1,colors.textColor2,'Пространство:')):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    infoContainer:addChild(GUI.label(1,2,15,1,colors.textColor2,'Координаты:')):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
+    infoContainer:addChild(GUI.label(1,3,15,1,colors.textColor2,'X: '..sx)):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
+    infoContainer:addChild(GUI.label(1,4,15,1,colors.textColor2,'Y: '..sy)):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
+    infoContainer:addChild(GUI.label(1,5,15,1,colors.textColor2,'Z: '..sz)):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
+    infoContainer:addChild(GUI.label(1,7,15,1,colors.textColor2,'Пространство:')):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
     if ship.isInSpace() == true or planet == 'Asteroids' then
         pos = 'Космос'
     elseif ship.isInHyperspace() == true then
@@ -97,13 +97,13 @@ local function drawNav()
     else
         pos = 'Планета '..planet..''
     end
-    infoContainer:addChild(GUI.label(1,8,15,2,colors.textColor2,pos)):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    infoContainer:addChild(GUI.label(1,8,15,2,colors.textColor2,pos)):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
 end
 
 local function drawLoggingSettings()
-    navContainer:deleteChildren()
+    navContainer:removeChildren()
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
-    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Настройки логов")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Настройки логов")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
     navContainer:addChild(GUI.text(2,3,colors.button,"Логгирование с помощью POST-запроса"))
     navContainer:addChild(GUI.switchAndLabel(2, 5, 31, 8, colors.button, 0x1D1D1D, 0xEEEEEE, colors.textColor, "Включить логирование:", config.loggingEnabled)).switch.onStateChanged = function()
         config.loggingEnabled = true
@@ -124,9 +124,9 @@ end
 local function drawShipSettings()
     local back,left,down = ship.dim_negative()
     local front,right,up = ship.dim_positive()
-    navContainer:deleteChildren()
+    navContainer:removeChildren()
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
-    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Настройки корабля")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Настройки корабля")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
     navContainer:addChild(GUI.label(2, 3, 16, 1, colors.textColor, "Имя корабля"))
     navContainer:addChild(GUI.input(2, 4, 30, 1, 0xEEEEEE, 0x555555, 0x999999, 0xFFFFFF, 0x2D2D2D, ship.shipName(), "Имя корабля")).onInputFinished = function(navContainer, input, eventData, text)
         ship.shipName(text)
@@ -164,7 +164,7 @@ local function drawShipSettings()
     end
     navContainer:addChild(GUI.button(2,navContainer.height-1,19,1,colors.button,colors.background,colors.buttonPressed,colors.background,'Применить размеры')).onTouch = function()
         if front == 0 or back == 0 or up == 0 or down == 0 or left == 0 or right == 0 then
-            GUI.error("Размеры заполнены неправильно!")
+            GUI.alert("Размеры заполнены неправильно!")
             return
         end
         ship.dim_negative(back,left,down)
@@ -174,7 +174,7 @@ end
 
 local function drawUpdate()
     if not comp.isAvailable("internet") then
-        GUI.error("Для работы этой функции необходима интернет-карта!")
+        GUI.alert("Для работы этой функции необходима интернет-карта!")
         return
     end
     local b = require("internet").request("https://raw.githubusercontent.com/rrrGame/OpenComputersProgs/master/Interstellar/version.txt")
@@ -182,9 +182,9 @@ local function drawUpdate()
     for chunk in b do
         newVersion = newVersion..require("text").trim(chunk)
     end
-    navContainer:deleteChildren()
+    navContainer:removeChildren()
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
-    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Обновления")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Обновления")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
     if version == newVersion then
         navContainer:addChild(GUI.text(2,3,colors.buttonNo,"Новых обновлений не найдено."))
         return
@@ -205,7 +205,7 @@ local function drawUpdate()
     navContainer:addChild(GUI.button(2, 18, 15, 3, colors.button, colors.textColor2, colors.buttonPressed, colors.textColor2, "Обновить ПО")).onTouch = function()
         mainContainer:stopEventHandling()
         buffer.clear(0x0)
-        buffer.draw(false)
+        buffer.drawChanges(false)
         comp.gpu.setForeground(0xFFFFFF)
         print("Начинаю процесс обновления..")
         print("\n\nЗагрузка списка файлов..")
@@ -231,7 +231,7 @@ local function drawUpdate()
 end
 
 local function drawAbout()
-    navContainer:deleteChildren()
+    navContainer:removeChildren()
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
     navContainer:addChild(GUI.label(1, 1, mainContainer.width, mainContainer.height, colors.textColor, "Interstellar\nВерсия 0.5\nАвтор: rrr_game"))
 end
@@ -241,8 +241,8 @@ local function antiFreeze()
     local fade = mainContainer:addChild(GUI.panel(1, 1, mainContainer.width, mainContainer.height, 0x000000,0.1))
     mainContainer:addChild(GUI.framedButton(1, 1, mainContainer.width-1, mainContainer.height-1, 0x1a1a1a, 0xFFFFFF, 0x1a1a1a, 0xFFFFFF, "Выполняется прыжок...\nНажмите на экран по завершению")).onTouch = function(mainContainer,button)
         require("event").cancel(antiFreezeTimer)
-        button:delete()
-        fade:delete()
+        button:remove()
+        fade:remove()
         drawNav()
     end
 end
@@ -262,9 +262,9 @@ local function drawJump()
     local jumpZ = 0
     local rot = 0
     local type
-    navContainer:deleteChildren()
+    navContainer:removeChildren()
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
-    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Прыжок")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Прыжок")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
     navContainer:addChild(GUI.label(2, 4, 8, 1, 0x555555, "Введенные значения будут ограничены автоматически."))
     navContainer:addChild(GUI.label(2, 6, 16, 1, colors.textColor, "Ось перед-зад ("..mindx.." - "..tostring(max + mindx)..")"))
     navContainer:addChild(GUI.input(2, 7, 30, 1, 0xEEEEEE, 0x555555, 0x999999, 0xFFFFFF, 0x2D2D2D, "0", "X")).onInputFinished = function(navContainer, input, eventData, text)
@@ -295,7 +295,7 @@ local function drawJump()
         if rot <= -rotmax then rot = -rotmax input.text = rot return end
     end
     navContainer:addChild(GUI.button(2, 18, 29, 3, colors.button, colors.textColor2, colors.buttonPressed, colors.textColor2, "Совершить прыжок")).onTouch = function()
-        if jumpX == 0 and jumpY == 0 and jumpZ == 0 and rot == 0 then GUI.error("Не введены координаты!") return end
+        if jumpX == 0 and jumpY == 0 and jumpZ == 0 and rot == 0 then GUI.alert("Не введены координаты!") return end
         ship.command("MANUAL")
         ship.rotationSteps(rot)
         ship.movement(jumpX,jumpY,jumpZ)
@@ -322,12 +322,12 @@ local function drawInfo()
     local front,right,up = ship.dim_positive()
     local ass
     if assembly then ass = "правильная" else ass = "неправильная" end
-    navContainer:deleteChildren()
+    navContainer:removeChildren()
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
     navContainer:addChild(GUI.button(2,navContainer.height-1,19,1,colors.button,colors.background,colors.buttonPressed,colors.background,'Настроить корабль')).onTouch = function()
         drawShipSettings()
     end
-    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Информация о корабле")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Информация о корабле")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
     navContainer:addChild(GUI.label(2, 3, 61, 1, colors.textColor, "Имя корабля: "..name))
     navContainer:addChild(GUI.label(2, 5, 61, 1, colors.textColor, "Масса корабля: "..size.." блоков"))
     navContainer:addChild(GUI.label(2, 7, 61, 1, colors.textColor, "Сборка корабля: "..ass))
@@ -342,12 +342,12 @@ local function drawInfo()
 end
 
 local function drawRadar()
-    if not comp.isAvailable("warpdriveRadar") then GUI.error("Для работы этой функции необходим подключенный варп-радар!") return end
-    navContainer:deleteChildren()
+    if not comp.isAvailable("warpdriveRadar") then GUI.alert("Для работы этой функции необходим подключенный варп-радар!") return end
+    navContainer:removeChildren()
     local max = 9999
     local radius = 1
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
-    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Варп-радар")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Варп-радар")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
     local textBox = navContainer:addChild(GUI.textBox(2, 9, 60, 12, 0xEEEEEE, 0x2D2D2D, {}, 1, 1, 0))
     if radartable then textBox.lines = radartable end
     navContainer:addChild(GUI.label(2, 3, 9, 1, 0x555555, 'Максимум радиуса: '..max))
@@ -360,7 +360,7 @@ local function drawRadar()
         if radius < 1 then radius = 1 input.text = radius end
     end
     navContainer:addChild(GUI.button(33, 7, 29, 1, colors.button, colors.background, colors.buttonPressed, 0xFFFFFF, "Сканировать")).onTouch = function(navContainer, button, eventData, text)
-        if comp.warpdriveRadar.getEnergyRequired(radius) > comp.warpdriveRadar.energy() then GUI.error("Ошибка: недостаточно энергии.\nНакоплено "..comp.warpdriveRadar.energy().." EU\nНеобходимо еще "..comp.warpdriveRadar.getEnergyRequired(radius) - comp.warpdriveRadar.energy().." EU") return end
+        if comp.warpdriveRadar.getEnergyRequired(radius) > comp.warpdriveRadar.energy() then GUI.alert("Ошибка: недостаточно энергии.\nНакоплено "..comp.warpdriveRadar.energy().." EU\nНеобходимо еще "..comp.warpdriveRadar.getEnergyRequired(radius) - comp.warpdriveRadar.energy().." EU") return end
         comp.warpdriveRadar.radius(radius)
         comp.warpdriveRadar.start()
         os.sleep(0.5)
@@ -390,18 +390,18 @@ local function drawRadar()
 end
 local function drawCrew()
     ship.command("SUMMON")
-    navContainer:deleteChildren()
+    navContainer:removeChildren()
     local pl = ""
     local str, players = ship.getAttachedPlayers()
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
-    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Экипаж")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Экипаж")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
     navContainer:addChild(GUI.label(2, 3, 61, 1, colors.textColor, "Список подключенных игроков:"))
     navContainer:addChild(GUI.label(2, 16, 61, 1, colors.textColor, "Телепорт игроков:"))
     navContainer:addChild(GUI.input(2, 18, 29, 1, 0xEEEEEE, 0x555555, 0x999999, 0xFFFFFF, 0x2D2D2D, "", "Ник игрока")).onInputFinished = function(navContainer, input, eventData, text) pl = text end
     navContainer:addChild(GUI.button(2, 20, 29, 1, colors.button, colors.textColor2, colors.buttonPressed, colors.textColor2, "Телепортировать по нику")).onTouch = function()
         for i = 1,#players do
             if pl == players[i] then
-                GUI.error("Sum")
+                GUI.alert("Sum")
                 ship.command("SUMMON")
                 ship.targetName(pl)
                 ship.enable(true)
@@ -423,11 +423,11 @@ local function drawCrew()
     end 
 end
 local function drawCloak()
-    if not comp.isAvailable("warpdriveCloakingCore") then GUI.error("Для работы этой функции необходим подключенный маскировщик!") return end
-    navContainer:deleteChildren()
+    if not comp.isAvailable("warpdriveCloakingCore") then GUI.alert("Для работы этой функции необходим подключенный маскировщик!") return end
+    navContainer:removeChildren()
     cloak = comp.warpdriveCloakingCore
     navContainer:addChild(GUI.panel(1, 1, navContainer.width, navContainer.height, colors.window))
-    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Маскировка")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:addChild(GUI.label(1, 1, 61, 1, colors.button, "Маскировка")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
     navContainer:addChild(GUI.label(2, 6, 16, 1, colors.textColor, 'Уровень маскировки'))
     --2, 7, 30, 1
     local comboBox = navContainer:addChild(GUI.comboBox(2, 7, 30, 1, 0xEEEEEE, 0x2D2D2D, colors.button, 0x888888))
@@ -436,7 +436,7 @@ local function drawCloak()
     end
     comboBox:addItem("Уровень 1").onTouch = function()
         local valid, msg = cloak.isAssemblyValid()
-        if not valid then GUI.error("Ошибка! Неверная сборка маскировщика:\n"..msg) return end
+        if not valid then GUI.alert("Ошибка! Неверная сборка маскировщика:\n"..msg) return end
         cloak.enable(false)
         os.sleep(1)
         cloak.tier(1)
@@ -444,7 +444,7 @@ local function drawCloak()
     end
     comboBox:addItem("Уровень 2").onTouch = function()
         local valid, msg = cloak.isAssemblyValid()
-        if not valid then GUI.error("Ошибка! Неверная сборка маскировщика:\n"..msg) return end
+        if not valid then GUI.alert("Ошибка! Неверная сборка маскировщика:\n"..msg) return end
         cloak.enable(false)
         os.sleep(1)
         cloak.tier(2)
@@ -452,8 +452,8 @@ local function drawCloak()
     end
 end
 local function drawMap()
-    navContainer:deleteChildren()
-    navContainer:addChild(GUI.label(2, 2, navContainer.width, navContainer.height, colors.textColor, "Тут типа карта должна быть, ага.")):setAlignment(GUI.alignment.horizontal.center, GUI.alignment.vertical.center)
+    navContainer:removeChildren()
+    navContainer:addChild(GUI.label(2, 2, navContainer.width, navContainer.height, colors.textColor, "Тут типа карта должна быть, ага.")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_CENTER)
 end
 -----------------------------------------------------------------------------
 loadConfig()
@@ -519,6 +519,5 @@ drawMap()
 drawNav()
 -----------------------------------------------------------------------------
 buffer.clear()
-mainContainer:draw()
-buffer.draw(true)
+mainContainer:drawOnScreen(true)
 mainContainer:startEventHandling()
